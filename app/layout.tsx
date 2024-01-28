@@ -9,8 +9,6 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import ThemeProviderClient from "./providers/ThemeProvider";
-import { Box } from "@mui/material";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Pet Connect",
@@ -25,28 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Box
-          position="relative"
-          width="100vw"
-          py={14}
-          display="grid"
-          sx={{
-            placeItems: "center",
-          }}
-        >
-          <Image
-            src="/background.png"
-            alt="background"
-            fill
-            objectFit="cover"
-            style={{
-              zIndex: -1,
-              position: "absolute",
-              inset: 0,
-            }}
-          />
-          <ThemeProviderClient>{children}</ThemeProviderClient>
-        </Box>
+        <ThemeProviderClient>{children}</ThemeProviderClient>
       </body>
     </html>
   );

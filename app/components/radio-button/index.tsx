@@ -1,4 +1,3 @@
-import { theme } from "@/app/theme";
 import {
   FormControlLabel,
   FormControlLabelProps,
@@ -6,7 +5,6 @@ import {
   RadioProps,
 } from "@mui/material";
 import React from "react";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
 interface PCRadioButotnProps extends Omit<FormControlLabelProps, "control"> {
   radioProps?: RadioProps;
