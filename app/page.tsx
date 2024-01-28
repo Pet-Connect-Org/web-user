@@ -1,95 +1,129 @@
+"use client";
+
+import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
-import styles from "./page.module.css";
+import { theme } from "./theme";
+import PCTextField from "./components/textfield";
+import MailIcon from "@mui/icons-material/Mail";
+import PCRadioButton from "./components/radio-button";
+import LockIcon from "@mui/icons-material/Lock";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useState } from "react";
+import PCLink from "./components/link";
 
 export default function Home() {
+  const [isShowPassWord, setIsShowPassword] = useState(false);
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <Box
+      borderRadius={2}
+      bgcolor={theme.palette.common.white}
+      px={5}
+      py={4}
+      maxWidth={500}
+    >
+      <Box display="flex" justifyContent="center" mb={2} width="100%">
+        <Image src="/logo.png" width={175} height={60} alt="logo" />
+      </Box>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      <PCTextField
+        type="email"
+        fullWidth
+        InputProps={{
+          startAdornment: <MailIcon sx={{ mr: 1 }} />,
+        }}
+        label="Email"
+        placeholder="Email"
+      />
+      <PCTextField
+        containerProps={{
+          sx: {
+            mt: 2,
+          },
+        }}
+        fullWidth
+        type={isShowPassWord ? "text" : "password"}
+        InputProps={{
+          startAdornment: <LockIcon sx={{ mr: 1 }} />,
+          endAdornment: (
+            <IconButton onClick={() => setIsShowPassword((prev) => !prev)}>
+              {!isShowPassWord ? (
+                <VisibilityOffIcon sx={{ fill: theme.palette.common.black }} />
+              ) : (
+                <VisibilityIcon sx={{ fill: theme.palette.common.black }} />
+              )}
+            </IconButton>
+          ),
+        }}
+        label="Password"
+        placeholder="Password"
+      />
+      <Box
+        mt={2}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <PCRadioButton value="isRemember" label="Remember me" />
+        <Typography fontWeight={500} color={theme.palette.primary.main}>
+          Forgot password?
+        </Typography>
+      </Box>
+      <Button sx={{ mt: 4 }} fullWidth variant="contained">
+        <Image src="/footprint.png" width={20} height={20} alt="Footprint" />
+        <Typography ml={1}>Sign in</Typography>
+      </Button>
+      <Divider
+        sx={{
+          mt: 4,
+          "&::before, &::after": {
+            borderColor: theme.palette.primary.light,
+          },
+        }}
+      >
+        <Typography color={theme.palette.primary.light}>OR</Typography>
+      </Divider>
+      <Button
+        startIcon={
+          <Image
+            src="/facebook.png"
+            width={22}
+            height={22}
+            alt="Facebook Icon"
+            style={{ marginRight: 8 }}
+          />
+        }
+        sx={{ mt: 4 }}
+        fullWidth
+        variant="text"
+      >
+        <Typography>Continue with facebook</Typography>
+      </Button>
+      <Button
+        startIcon={
+          <Image
+            src="/google.png"
+            width={22}
+            height={22}
+            alt="Google Icon"
+            style={{ marginRight: 8 }}
+          />
+        }
+        sx={{ mt: 4 }}
+        fullWidth
+        variant="text"
+      >
+        <Typography>Continue with Google</Typography>
+      </Button>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <Box mt={4} textAlign="center">
+        <Typography color={theme.palette.tertiary.main}>
+          Dont have an account?
+        </Typography>
+        <PCLink href="#">
+          <Typography fontWeight={500}>Sign up</Typography>
+        </PCLink>
+      </Box>
+    </Box>
   );
 }
