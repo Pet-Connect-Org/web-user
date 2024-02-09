@@ -13,6 +13,7 @@ const colors = {
     100: "#FCFCFC",
     200: "rgba(0,0,0,0.5)",
     500: "#F1F3F5",
+    600: "#999999",
   },
   tertiary: {
     main: "rgba(3,11,91,0.5)",

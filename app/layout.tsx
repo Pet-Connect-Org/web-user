@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import ThemeProviderClient from "./providers/ThemeProvider";
+
 const inter = Inter({ subsets: ["latin"] });
 
 import "./globals.css";
@@ -8,7 +10,7 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import ThemeProviderClient from "./providers/ThemeProvider";
+import QueryProvider from "./providers/QueryProvider";
 
 export const metadata: Metadata = {
   title: "Pet Connect",
@@ -23,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProviderClient>{children}</ThemeProviderClient>
+        <QueryProvider>
+          <ThemeProviderClient>{children}</ThemeProviderClient>
+        </QueryProvider>
       </body>
     </html>
   );

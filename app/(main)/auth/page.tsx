@@ -1,20 +1,47 @@
 "use client";
 
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import { Box, Button, Divider, Typography } from "@mui/material";
 import Image from "next/image";
 import MailIcon from "@mui/icons-material/Mail";
-import LockIcon from "@mui/icons-material/Lock";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { useState } from "react";
 import { theme } from "@/app/theme";
 import PCTextField from "@/app/components/textfield";
 import PCRadioButton from "@/app/components/radio-button";
 import PCLink from "@/app/components/link";
 import OathBox from "./_component/oath-box";
+import * as yup from "Yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import PCHiddenTextField from "./_component/hidden-textfield";
 
+interface LoginFormProps {
+  email: string;
+  password: string;
+}
 export default function AuthPage() {
-  const [isShowPassWord, setIsShowPassword] = useState(false);
+  const scheme = yup.object().shape({
+    email: yup.string().required("This field is required").email(),
+    password: yup
+      .string()
+      .required("This field is required")
+      .min(6, "Must be at least 6 characters")
+      .matches(
+        /^(?=.*[A-Za-z])(?=.*\d).+$/,
+        "Must contain at least 1 number and 1 alphabetical character"
+      ),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormProps>({
+    mode: "onSubmit",
+    resolver: yupResolver(scheme),
+  });
+
+  const onSubmit = (values: LoginFormProps) => {
+    console.log(values);
+  };
 
   return (
     <>
@@ -26,29 +53,20 @@ export default function AuthPage() {
         }}
         label="Email"
         placeholder="Email"
+        helperText={errors.email?.message || ""}
+        inputProps={{ ...register("email") }}
       />
-      <PCTextField
+      <PCHiddenTextField
         containerProps={{
           sx: {
             mt: 2,
           },
         }}
+        helperText={errors.password?.message || ""}
         fullWidth
-        type={isShowPassWord ? "text" : "password"}
-        InputProps={{
-          startAdornment: <LockIcon sx={{ mr: 1 }} />,
-          endAdornment: (
-            <IconButton onClick={() => setIsShowPassword((prev) => !prev)}>
-              {!isShowPassWord ? (
-                <VisibilityOffIcon sx={{ fill: theme.palette.common.black }} />
-              ) : (
-                <VisibilityIcon sx={{ fill: theme.palette.common.black }} />
-              )}
-            </IconButton>
-          ),
-        }}
         label="Password"
         placeholder="Password"
+        inputProps={{ ...register("password") }}
       />
       <Box
         mt={2}
@@ -61,7 +79,12 @@ export default function AuthPage() {
           Forgot password?
         </Typography>
       </Box>
-      <Button sx={{ mt: 4 }} fullWidth variant="contained">
+      <Button
+        sx={{ mt: 4 }}
+        fullWidth
+        variant="contained"
+        onClick={handleSubmit(onSubmit)}
+      >
         <Image src="/footprint.png" width={20} height={20} alt="Footprint" />
         <Typography ml={1}>Sign in</Typography>
       </Button>
