@@ -1,5 +1,5 @@
 import { SEX_TYPE } from "@/app/types/user";
-import * as yup from "Yup";
+import * as yup from "yup";
 
 const useSignUpSchema = () => {
   const schema = yup.object().shape({

@@ -8,7 +8,7 @@ import PCTextField from "@/app/components/textfield";
 import PCRadioButton from "@/app/components/radio-button";
 import PCLink from "@/app/components/link";
 import OathBox from "./_component/oath-box";
-import * as yup from "Yup";
+import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import PCHiddenTextField from "./_component/hidden-textfield";
