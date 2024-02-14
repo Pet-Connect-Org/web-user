@@ -12,12 +12,18 @@ import * as yup from "Yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import PCHiddenTextField from "./_component/hidden-textfield";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   email: string;
   password: string;
 }
 export default function AuthPage() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const scheme = yup.object().shape({
     email: yup.string().required("This field is required").email(),
     password: yup
@@ -41,6 +47,23 @@ export default function AuthPage() {
 
   const onSubmit = (values: LoginFormProps) => {
     console.log(values);
+    setIsLoading(true);
+
+    signIn("credentials", {
+      ...values,
+      redirect: false,
+    })
+      .then((callback) => {
+        setIsLoading(false);
+        console.log(callback);
+        if (callback?.ok) {
+          router.push("/home");
+        }
+
+        if (callback?.error) {
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -80,9 +103,10 @@ export default function AuthPage() {
         </Typography>
       </Box>
       <Button
-        sx={{ mt: 4 }}
         fullWidth
+        sx={{ mt: 4 }}
         variant="contained"
+        disabled={isLoading}
         onClick={handleSubmit(onSubmit)}
       >
         <Image src="/footprint.png" width={20} height={20} alt="Footprint" />
