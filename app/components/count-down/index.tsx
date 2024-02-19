@@ -23,6 +23,7 @@ const PCCountDown = ({ time, onFinish }: PCCountDownProps) => {
     return () => {
       clearInterval(count);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timer]);
 
   return <>{timer}s</>;
