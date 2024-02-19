@@ -14,26 +14,24 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import PCHiddenTextField from "../_component/hidden-textfield";
 import ValidateChecked from "@/app/components/validate-checked";
 import useValidatePassword from "@/app/hooks/useValidatePassword";
-import { SEX_TYPE } from "@/app/types/user";
 import useSignUpSchema from "./useSignUpSchema";
-
-interface RegisterFormProps {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  sex: SEX_TYPE;
-  birthday: Date;
-  name: string;
-}
+import { SignUpBody } from "@/app/api/auth";
+import PlaceIcon from "@mui/icons-material/Place";
+import { useRegister } from "@/app/services/auth";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
 
 const SignUpPage = () => {
   const schema = useSignUpSchema();
+  const { mutate, isLoading } = useRegister();
+  const router = useRouter();
   const {
     watch,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormProps>({
+  } = useForm<SignUpBody>({
     resolver: yupResolver(schema),
     mode: "onSubmit",
     defaultValues: {
@@ -46,8 +44,20 @@ const SignUpPage = () => {
   const { includedAlphanumeric, isValidLength } =
     useValidatePassword(passwordValue);
 
-  const onSubmit = (values: RegisterFormProps) => {
-    console.log(values);
+  const onSubmit = (values: SignUpBody) => {
+    mutate(values, {
+      onSuccess: () => {
+        router.push(`/auth/otp?email=${values.email}`);
+        toast.success("Otp was sent. Please check your email.");
+      },
+      onError: (response: any) => {
+        if (response.response?.data?.errors)
+          toast.error(
+            Object.values(response.response?.data?.errors).toString()
+          );
+        else toast.error("Somethings went wrong. Please try again.");
+      },
+    });
   };
 
   return (
@@ -77,6 +87,17 @@ const SignUpPage = () => {
           helperText={errors.birthday?.message || ""}
         />
       </Box>
+      <PCTextField
+        fullWidth
+        InputProps={{
+          startAdornment: <PlaceIcon sx={{ mr: 1 }} />,
+        }}
+        label="Address"
+        placeholder="Address"
+        containerProps={{ sx: { mt: 2 } }}
+        inputProps={{ ...register("address") }}
+        helperText={errors.address?.message || ""}
+      />
       <PCTextField
         type="email"
         fullWidth
@@ -123,12 +144,12 @@ const SignUpPage = () => {
         inputProps={{ ...register("confirmPassword") }}
         helperText={errors.confirmPassword?.message || ""}
       />
-
       <Button
         sx={{ mt: 4 }}
         fullWidth
         variant="contained"
         onClick={handleSubmit(onSubmit)}
+        disabled={isLoading}
       >
         <Image src="/footprint.png" width={20} height={20} alt="Footprint" />
         <Typography ml={1}>Sign up</Typography>
@@ -144,7 +165,6 @@ const SignUpPage = () => {
         <Typography color={theme.palette.primary.light}>OR</Typography>
       </Divider>
       <OathBox />
-
       <Box mt={4} textAlign="center">
         <Typography color={theme.palette.tertiary.main}>
           Already have an account?

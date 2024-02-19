@@ -9,18 +9,7 @@ const PCConnectionInstance = axios.create({
 PCConnectionInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    const axiosError = error as AxiosError;
-
-    if (
-      axiosError.response?.status === 500 ||
-      axiosError.response?.status === 404
-    ) {
-    }
-
-    if (axiosError.response?.status === 401) {
-    }
-
-    return Promise.reject(error);
+    return Promise.reject(error as AxiosError);
   }
 );
 

@@ -15,15 +15,18 @@ import PCHiddenTextField from "./_component/hidden-textfield";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useResendVerificationCode } from "@/app/services/auth";
 
 interface LoginFormProps {
   email: string;
   password: string;
 }
+
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-
+  const { mutate } = useResendVerificationCode();
   const scheme = yup.object().shape({
     email: yup.string().required("This field is required").email(),
     password: yup
@@ -46,7 +49,6 @@ export default function AuthPage() {
   });
 
   const onSubmit = (values: LoginFormProps) => {
-    console.log(values);
     setIsLoading(true);
 
     signIn("credentials", {
@@ -56,12 +58,28 @@ export default function AuthPage() {
       .then((callback) => {
         setIsLoading(false);
         console.log(callback);
-        if (callback?.ok) {
+        if (!callback?.error) {
           router.push("/home");
+          return toast.success("Login successfully. Welcome back.");
         }
-
-        if (callback?.error) {
+        if (callback?.error === "Account have not active yet.") {
+          mutate(
+            { email: values.email },
+            {
+              onSuccess: () => {
+                toast.success(
+                  `Verify code has sent to your email at ${values.email}`
+                );
+                router.push(`/auth/otp?email=${values.email}`);
+              },
+              onError: () => {
+                toast.error(`Can not send an email to ${values.email}`);
+              },
+            }
+          );
+          return;
         }
+        toast.error("Somethings went wrong. Please try again.");
       })
       .finally(() => setIsLoading(false));
   };

@@ -17,6 +17,7 @@ const useSignUpSchema = () => {
       .oneOf([yup.ref("password"), undefined], "Password mismatch")
       .required("This field is required"),
     name: yup.string().required("This field is required"),
+    address: yup.string().required("This field is required"),
     sex: yup.mixed<SEX_TYPE>().required("This field is required"),
     birthday: yup
       .date()

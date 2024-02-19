@@ -11,6 +11,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import QueryProvider from "./providers/QueryProvider";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Pet Connect",
@@ -26,6 +27,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <QueryProvider>
+          <Toaster />
           <ThemeProviderClient>{children}</ThemeProviderClient>
         </QueryProvider>
       </body>

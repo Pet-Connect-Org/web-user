@@ -4,6 +4,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { PCConnectionInstance } from "./app/api";
 import { getMe, getUserById } from "./app/api/user";
+import { NextResponse } from "next/server";
+import { AxiosError } from "axios";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -19,41 +21,45 @@ export const authOptions: AuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid credentials");
-        }
-        const { data: account } = await logIn(credentials);
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Invalid credentials");
+          }
+          const { data: account } = await logIn(credentials);
 
-        if (!account) {
-          throw new Error("Invalid credentials");
-        }
+          if (!account) {
+            throw new Error("Invalid credentials");
+          }
 
-        PCConnectionInstance.interceptors.request.use(
-          (config) => {
-            if (account.token) {
-              config.headers.Authorization = `Bearer ${account.token}`;
+          PCConnectionInstance.interceptors.request.use(
+            (config) => {
+              if (account.token) {
+                config.headers.Authorization = `Bearer ${account.token}`;
+              }
+              return config;
+            },
+            (error) => {
+              return Promise.reject(error as AxiosError);
             }
-            return config;
-          },
-          (error) => error
-        );
+          );
 
-        const {
-          data: { user },
-        } = await getMe();
+          const {
+            data: { user },
+          } = await getMe();
 
-        console.log("User ~~ ", user);
-
-        return {
-          id: user.id, // Use userId instead of account Id
-          name: user?.name,
-          email: account.user?.email,
-          sex: user.sex,
-          address: user.address,
-          birthday: user.birthday,
-          role: account.user?.role,
-          accessToken: account.token,
-        };
+          return {
+            id: user.id, // Use userId instead of account Id
+            name: user?.name,
+            email: account.user?.email,
+            sex: user.sex,
+            address: user.address,
+            birthday: user.birthday,
+            role: account.user?.role,
+            accessToken: account.token,
+          };
+        } catch (err: any) {
+          throw new Error(err.response.data.message);
+        }
       },
     }),
   ],
@@ -108,7 +114,7 @@ export const authOptions: AuthOptions = {
         session.user.email = token.email;
       }
 
-      console.log("Session ~~ ", session);
+      //   console.log("Session ~~ ", session);
 
       return session;
     },
@@ -116,6 +122,7 @@ export const authOptions: AuthOptions = {
   session: {
     strategy: "jwt",
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export const handler = NextAuth(authOptions);
