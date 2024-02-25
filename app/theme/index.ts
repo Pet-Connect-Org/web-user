@@ -6,14 +6,17 @@ import {
 
 const colors = {
   primary: {
+    dark: "#89271A",
     main: "#F79345",
     light: "#FDBDA2",
   },
+  secondary: { main: "#17A117", light: "#D1DAB2" },
   grey: {
     100: "#FCFCFC",
-    200: "rgba(0,0,0,0.5)",
-    500: "#F1F3F5",
-    600: "#999999",
+    200: "#F1F3F5", // neutral
+    500: "#999999",
+    600: "#888484", // dark neutral
+    800: "rgba(0,0,0,0.5)",
   },
   tertiary: {
     main: "rgba(3,11,91,0.5)",
@@ -29,7 +32,7 @@ const colors = {
 export const theme = createTheme({
   palette: {
     primary: colors.primary,
-    // secondary: colors.secondary,
+    secondary: colors.secondary,
     tertiary: colors.tertiary,
     grey: colors.grey,
     success: { main: "#34C759" },

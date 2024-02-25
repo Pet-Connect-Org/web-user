@@ -42,7 +42,7 @@ const PCTextField = ({
         sx={{
           borderRadius: "8px",
           padding: 1.5,
-          bgcolor: theme.palette.grey[500],
+          bgcolor: theme.palette.grey[200],
           [`input::-webkit-outer-spin-button,
           input::-webkit-inner-spin-button`]: {
             WebkitAppearance: "none",

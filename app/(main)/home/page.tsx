@@ -1,26 +1,22 @@
 "use client";
 
 import { useUser } from "@/app/hooks/useUser";
-import { Button } from "@mui/material";
 import React from "react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Box } from "@mui/material";
+import LeftSideBar from "../_components/left-sidebar";
+import { theme } from "@/app/theme";
 
 const HomePage = () => {
   const router = useRouter();
-  const { user, setInformation } = useUser();
-
-  const handleLogout = () => {
-    signOut();
-    router.push("/");
-  };
-  console.log(user);
 
   return (
-    <div>
-      Home
-      <Button onClick={handleLogout}>Logout</Button>
-    </div>
+    <>
+      <LeftSideBar />
+      {/* <MainContent /> */}
+      {/* <RightSidebar /> */}
+    </>
   );
 };
 
