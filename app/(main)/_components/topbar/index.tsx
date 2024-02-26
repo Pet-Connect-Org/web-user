@@ -4,22 +4,20 @@ import { useUser } from "@/app/hooks/useUser";
 import { theme } from "@/app/theme";
 import { Avatar, Box, IconButton } from "@mui/material";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MenuUser from "../menu-user";
+import PCTextField from "@/app/components/textfield";
 
 const Topbar = () => {
-  const { user, setInformation } = useUser();
+  const { user } = useUser();
+  const [showSearchBox, setShowSearchBox] = useState(false);
 
   if (!user) {
     return null;
   }
 
   return (
-    <Box
-      bgcolor={theme.palette.common.white}
-      py={2}
-      boxShadow="1px 1px rgba(0,0,0,0.25)"
-    >
+    <Box bgcolor={theme.palette.common.white} py={2}>
       <Box
         maxWidth={1200}
         display="flex"
@@ -35,14 +33,36 @@ const Topbar = () => {
           justifyContent="right"
           alignItems="center"
         >
-          <IconButton>
-            <Image
-              alt="search"
-              src="/icons/search.svg"
-              width={24}
-              height={24}
+          {!showSearchBox ? (
+            <IconButton onClick={() => setShowSearchBox(true)}>
+              <Image
+                alt="search"
+                src="/icons/search.svg"
+                width={24}
+                height={24}
+              />
+            </IconButton>
+          ) : (
+            <PCTextField
+              autoFocus
+              InputProps={{
+                endAdornment: (
+                  <Image
+                    alt="search"
+                    src="/icons/search.svg"
+                    width={24}
+                    height={24}
+                  />
+                ),
+              }}
+              placeholder="Search for users, pets,..."
+              containerProps={{
+                sx: { width: 300 },
+              }}
+              size="small"
+              onBlur={() => showSearchBox && setShowSearchBox(false)}
             />
-          </IconButton>
+          )}
           <IconButton>
             <Image
               alt="notification"

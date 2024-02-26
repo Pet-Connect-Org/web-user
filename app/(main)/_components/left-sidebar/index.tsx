@@ -13,6 +13,7 @@ import DoorBackIcon from "@mui/icons-material/DoorBack";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import ClassIcon from "@mui/icons-material/Class";
 import Image from "next/image";
+import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 
 const LIST_LINK = [
   {
@@ -23,7 +24,7 @@ const LIST_LINK = [
   {
     label: "My pet",
     link: "/home",
-    icon: "/icons/foot.svg",
+    icon: PetsOutlinedIcon,
   },
   {
     label: "Friends",
@@ -44,7 +45,9 @@ const LIST_LINK = [
 
 const LeftSideBar = () => {
   const { user } = useUser();
+
   if (!user) return;
+
   return (
     <Box height="100%" width={300} display="flex" flexDirection="column">
       <Box display="flex" alignItems="center" px={2} pb={2}>

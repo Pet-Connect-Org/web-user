@@ -17,14 +17,14 @@ export default async function MainLayout({
   }
   return (
     <Client data={data as any}>
-      <Box
-        height="100vh"
-        maxHeight="100vh"
-        display="flex"
-        flexDirection="column"
-      >
+      <Box>
         <Topbar />
-        <Box py={3} bgcolor="#F1F3F5" flex={1}>
+        <Box
+          pt={3}
+          bgcolor="#F1F3F5"
+          height="calc(100vh - 88px)"
+          maxHeight="calc(100vh - 88px)"
+        >
           {children}
         </Box>
       </Box>

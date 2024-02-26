@@ -10,7 +10,7 @@ const colors = {
     main: "#F79345",
     light: "#FDBDA2",
   },
-  secondary: { main: "#17A117", light: "#D1DAB2" },
+  secondary: { main: "#61CAC2", light: "#AAE8E3" },
   grey: {
     100: "#FCFCFC",
     200: "#F1F3F5", // neutral
@@ -98,10 +98,43 @@ export const theme = createTheme({
             backgroundColor: colors.primary.light,
           },
         },
+        containedPrimary: {
+          color: "#FFFFFF",
+          backgroundColor: colors.primary.main,
+
+          "&.Mui-disabled": {
+            backgroundColor: colors.primary.light,
+          },
+          "&:hover": {
+            opacity: 0.8,
+          },
+        },
+        outlinedPrimary: {
+          color: colors.primary.main,
+          backgroundColor: "transparent",
+          border: `1px solid ${colors.primary.main}`,
+        },
+        outlinedSecondary: {
+          color: colors.secondary.main,
+          backgroundColor: "transparent",
+          border: `1px solid ${colors.secondary.main}`,
+        },
+        containedSecondary: {
+          color: "#FFFFFF",
+          backgroundColor: colors.secondary.main,
+
+          "&.Mui-disabled": {
+            backgroundColor: colors.secondary.light,
+          },
+        },
         text: {
           color: "#000000",
-          backgroundColor: colors.grey[100],
-          boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.1)",
+          backgroundColor: "transparent",
+          boxShadow: "unset",
+
+          "&:hover": {
+            backgroundColor: colors.grey[200],
+          },
         },
       },
     },

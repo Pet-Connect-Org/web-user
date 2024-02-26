@@ -1,22 +1,18 @@
 "use client";
 
-import { useUser } from "@/app/hooks/useUser";
 import React from "react";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Box } from "@mui/material";
 import LeftSideBar from "../_components/left-sidebar";
-import { theme } from "@/app/theme";
+import RightSidebar from "../_components/right-sidebar";
+import MainContent from "../_components/main-content";
 
 const HomePage = () => {
-  const router = useRouter();
-
   return (
-    <>
+    <Box display="flex" height="100%" maxWidth={1920} mx="auto">
       <LeftSideBar />
-      {/* <MainContent /> */}
-      {/* <RightSidebar /> */}
-    </>
+      <MainContent sx={{ flex: 1 }} />
+      <RightSidebar />
+    </Box>
   );
 };
 
