@@ -3,10 +3,13 @@ import { theme } from "@/app/theme";
 import {
   Avatar,
   Box,
+  BoxProps,
   Icon,
   MenuItem,
   MenuList,
+  Portal,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import React from "react";
 import DoorBackIcon from "@mui/icons-material/DoorBack";
@@ -14,6 +17,7 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import ClassIcon from "@mui/icons-material/Class";
 import Image from "next/image";
 import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
+import Invitation from "../invitation";
 
 const LIST_LINK = [
   {
@@ -43,21 +47,37 @@ const LIST_LINK = [
   },
 ];
 
-const LeftSideBar = () => {
+interface LeftSideBarProps extends BoxProps {}
+
+const LeftSideBar = (props: LeftSideBarProps) => {
   const { user } = useUser();
+  const isMiniMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   if (!user) return;
 
   return (
-    <Box height="100%" width={300} display="flex" flexDirection="column">
-      <Box display="flex" alignItems="center" px={2} pb={2}>
-        <Avatar sx={{ bgcolor: theme.palette.primary.light }}>
-          {user.name.charAt(0)}
-        </Avatar>
-        <Typography ml={1.5} fontWeight={600}>
-          {user.name}
-        </Typography>
-      </Box>
+    <Box
+      height="100%"
+      display="flex"
+      flexDirection="column"
+      overflow="auto"
+      {...props}
+    >
+      {isMiniMobile && (
+        <Box px={3}>
+          <Invitation />
+        </Box>
+      )}
+      {!isMiniMobile && (
+        <Box display="flex" alignItems="center" px={2} pb={2}>
+          <Avatar sx={{ bgcolor: theme.palette.primary.light }}>
+            {user.name.charAt(0)}
+          </Avatar>
+          <Typography ml={1.5} fontWeight={600}>
+            {user.name}
+          </Typography>
+        </Box>
+      )}
       <MenuList sx={{ flex: 1 }}>
         {LIST_LINK.map((link) => (
           <MenuItem
@@ -80,6 +100,7 @@ const LeftSideBar = () => {
           </MenuItem>
         ))}
       </MenuList>
+
       <Box p={3} textAlign="center">
         <Typography variant="footnote" color={theme.palette.grey[500]}>
           Copyright © 2024 Pet Connect. All Rights Reserved.

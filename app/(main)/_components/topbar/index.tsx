@@ -2,22 +2,25 @@
 
 import { useUser } from "@/app/hooks/useUser";
 import { theme } from "@/app/theme";
-import { Avatar, Box, IconButton } from "@mui/material";
+import { Box, IconButton, useMediaQuery } from "@mui/material";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import MenuUser from "../menu-user";
-import PCTextField from "@/app/components/textfield";
+import { useToggleMobileSidebarLeft } from "@/app/hooks/useToggleMobileSidebarLeft";
+import SearchBox from "../search-box";
 
 const Topbar = () => {
   const { user } = useUser();
-  const [showSearchBox, setShowSearchBox] = useState(false);
+
+  const toggleSidebarLeft = useToggleMobileSidebarLeft();
+  const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
 
   if (!user) {
     return null;
   }
 
   return (
-    <Box bgcolor={theme.palette.common.white} py={2}>
+    <Box bgcolor={theme.palette.common.white} py={2} px={2}>
       <Box
         maxWidth={1200}
         display="flex"
@@ -25,7 +28,37 @@ const Topbar = () => {
         alignItems="center"
         marginX="auto"
       >
-        <Image src="/noTextLogo.png" height={48} width={48} alt="Logo" />
+        {isTablet && (
+          <IconButton
+            onClick={() => toggleSidebarLeft.onToggle()}
+            sx={{
+              zIndex: 9999,
+              color: theme.palette.common.black,
+              bgcolor: theme.palette.common.white,
+              mr: 3,
+              ...(toggleSidebarLeft.isOpen && {
+                boxShadow: "0px 0px 2px rgba(0,0,0,0.2)",
+              }),
+            }}
+          >
+            {!toggleSidebarLeft.isOpen ? (
+              <Image alt="bar" src="/icons/bar.svg" width={24} height={24} />
+            ) : (
+              <Image alt="bar" src="/icons/xMark.svg" width={24} height={24} />
+            )}
+          </IconButton>
+        )}
+
+        {!isTablet && (
+          <Image
+            src="/noTextLogo.png"
+            height={48}
+            width={48}
+            alt="Logo"
+            style={{ marginRight: 18 }}
+          />
+        )}
+
         <Box
           gap={4}
           flex={1}
@@ -33,36 +66,7 @@ const Topbar = () => {
           justifyContent="right"
           alignItems="center"
         >
-          {!showSearchBox ? (
-            <IconButton onClick={() => setShowSearchBox(true)}>
-              <Image
-                alt="search"
-                src="/icons/search.svg"
-                width={24}
-                height={24}
-              />
-            </IconButton>
-          ) : (
-            <PCTextField
-              autoFocus
-              InputProps={{
-                endAdornment: (
-                  <Image
-                    alt="search"
-                    src="/icons/search.svg"
-                    width={24}
-                    height={24}
-                  />
-                ),
-              }}
-              placeholder="Search for users, pets,..."
-              containerProps={{
-                sx: { width: 300 },
-              }}
-              size="small"
-              onBlur={() => showSearchBox && setShowSearchBox(false)}
-            />
-          )}
+          <SearchBox />
           <IconButton>
             <Image
               alt="notification"
