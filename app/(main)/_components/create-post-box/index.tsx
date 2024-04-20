@@ -1,6 +1,8 @@
 "use client";
 
+import CreatePostModal from "@/app/components/modal/CreatePostModal";
 import PCTextField from "@/app/components/textfield";
+import { useCreatePostModal } from "@/app/hooks/useCreatePostModal";
 import { useUser } from "@/app/hooks/useUser";
 import { theme } from "@/app/theme";
 import {
@@ -33,6 +35,7 @@ const BUTTON_ACTIONS = [
 
 const CreatePostBox = () => {
   const { user } = useUser();
+  const createPostModal = useCreatePostModal();
   const isMiniMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   if (!user) return;
@@ -50,6 +53,7 @@ const CreatePostBox = () => {
           {user.name.charAt(0)}
         </Avatar>
         <PCTextField
+          onClick={() => createPostModal.onToggle()}
           fullWidth
           name="share"
           placeholder={`Hey ${user.name.split(" ")[0]}, what are you doing?`}
@@ -93,6 +97,10 @@ const CreatePostBox = () => {
           </Box>
         </>
       )}
+      <CreatePostModal
+        onClose={() => createPostModal.onClose()}
+        open={createPostModal.isOpen}
+      />
     </Box>
   );
 };

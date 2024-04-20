@@ -1,8 +1,7 @@
-import { logIn, logOut } from "@/app/api/auth";
+import { LoginResponse, logIn, logOut } from "@/app/api/auth";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PCConnectionInstance } from "./app/api";
-import { getMe, getUserById } from "./app/api/user";
 import { AxiosError } from "axios";
 
 export const authOptions: AuthOptions = {
@@ -18,20 +17,16 @@ export const authOptions: AuthOptions = {
           if (!credentials?.email || !credentials?.password) {
             throw new Error("Invalid credentials");
           }
-          const data = await logIn(credentials);
+          const data: any = await logIn(credentials);
 
-          const account = data.data;
-
-          console.log("ACCOUNT NE ~~ ", account);
-
-          if (!account) {
+          if (!data) {
             throw new Error("Invalid credentials");
           }
 
           PCConnectionInstance.interceptors.request.use(
             (config) => {
-              if (account.token) {
-                config.headers.Authorization = `Bearer ${account.token}`;
+              if (data.token) {
+                config.headers.Authorization = `Bearer ${data.token}`;
               }
               return config;
             },
@@ -40,24 +35,18 @@ export const authOptions: AuthOptions = {
             }
           );
 
-          const {
-            data: { user },
-          } = await getMe();
-
-          console.log(user);
-
           return {
-            id: user.id, // Use userId instead of account Id
-            name: user?.name,
-            email: account.user?.email,
-            sex: user.sex,
-            address: user.address,
-            birthday: user.birthday,
-            role: account.user?.role,
-            accessToken: account.token,
+            id: data.user.id,
+            name: data.user.name,
+            email: data.user.email,
+            sex: data.user.sex,
+            address: data.user.address,
+            birthday: data.user.birthday,
+            role: data.user.role,
+            accessToken: data.token,
           };
         } catch (err: any) {
-          // console.log(err);
+          console.log(err);
           throw new Error(err.response.data.message);
         }
       },
@@ -73,27 +62,12 @@ export const authOptions: AuthOptions = {
     },
   },
   callbacks: {
-    async jwt({ token }) {
-      if (!token.sub) return token;
-
-      const {
-        data: { user },
-      } = await getUserById(token.sub);
-
-      if (!user) return token;
-
-      token.name = user.name;
-      token.email = token.email;
-      token.role = token.role;
-      token.sex = user.sex;
-      token.birthday = user.birthday;
-      token.address = user.address;
-
-      return token;
+    async jwt({ token, user }) {
+      return { ...user, ...token };
     },
     async session({ token, session }) {
       if (token.sub && session.user) {
-        session.user.id = token.sub;
+        session.user.id = +token.sub;
       }
 
       if (token.role && session.user) {
@@ -107,6 +81,9 @@ export const authOptions: AuthOptions = {
       }
       if (token.birthday && session.user) {
         session.user.birthday = token.birthday as Date;
+      }
+      if (token.accessToken && session.user) {
+        session.user.accessToken = token.accessToken as string;
       }
 
       if (session.user) {

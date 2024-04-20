@@ -1,44 +1,88 @@
 "use client";
 
-import { useUser } from "@/app/hooks/useUser";
+import { useLikeComment, useUnlikeComment } from "@/app/services/comment";
 import { theme } from "@/app/theme";
+import { ExtendedCommentType } from "@/app/types/user";
 import { Avatar, Box, Typography } from "@mui/material";
-import React from "react";
+import { formatDistance } from "date-fns";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 interface CommentProps {
   id: number;
-  data: any;
+  data: ExtendedCommentType;
+  isLike: boolean;
 }
 
-const Comment = ({ data, id }: CommentProps) => {
+const Comment = ({ data, id, isLike }: CommentProps) => {
+  const [like, setLike] = useState<boolean>(isLike);
+  const { mutate: likeComment, isLoading: isLikeCommentLoading } =
+    useLikeComment();
+  const { mutate: unlikeComment, isLoading: isUnlikeCommentLoading } =
+    useUnlikeComment();
+
+  const handleLike = () => {
+    likeComment(id, {
+      onSuccess: () => {
+        toast.success("Like successfully.");
+        setLike(true);
+      },
+    });
+  };
+  const handleUnlike = () => {
+    unlikeComment(id, {
+      onSuccess: () => {
+        toast.success("Unlike successfully.");
+        setLike(false);
+      },
+    });
+  };
+
   return (
-    <Box display="flex" gap={3} mt={2}>
+    <Box display="flex" gap={2} mt={2}>
       <Avatar sx={{ bgcolor: theme.palette.primary.light }}>
         {data.user.name.charAt(0)}
       </Avatar>
       <Box flex={1}>
         <Box
-          p={2}
-          borderRadius={1.5}
+          py={1}
+          px={1.5}
+          borderRadius={4}
           bgcolor={theme.palette.grey[200]}
           display="inline-block"
+          maxWidth={900}
         >
-          <Typography fontWeight={600} mb={0.5}>
+          <Typography fontWeight={600} mb={0.25}>
             {data.user.id === id ? "You" : data.user.name}
           </Typography>
-          <Typography>{data.comment}</Typography>
+          <Typography>{data.content}</Typography>
         </Box>
-        <Box display="flex" gap={2} mt={0.5}>
-          <Typography color={theme.palette.grey[600]}>30 minute</Typography>
-          <Typography color={theme.palette.grey[600]} fontWeight={600}>
+        <Box display="flex" gap={2} mt={0.5} ml={1}>
+          <Typography color={theme.palette.grey[600]}>
+            {formatDistance(new Date(data.created_at), new Date(), {
+              addSuffix: true,
+            })}
+          </Typography>
+          <Typography
+            color={like ? theme.palette.primary.main : theme.palette.grey[600]}
+            fontWeight={600}
+            sx={{ cursor: "pointer" }}
+            onClick={
+              isLikeCommentLoading || isUnlikeCommentLoading
+                ? undefined
+                : like
+                ? handleUnlike
+                : handleLike
+            }
+          >
             Like
           </Typography>
-          <Typography color={theme.palette.grey[600]} fontWeight={600}>
-            Relpy
+          {/* <Typography color={theme.palette.grey[600]} fontWeight={600}>
+            Reply
           </Typography>
           <Typography color={theme.palette.grey[600]} fontWeight={600}>
             Share
-          </Typography>
+          </Typography> */}
         </Box>
       </Box>
     </Box>

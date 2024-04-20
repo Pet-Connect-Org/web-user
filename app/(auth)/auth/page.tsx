@@ -78,7 +78,7 @@ export default function AuthPage() {
           );
           return;
         }
-        toast.error("Somethings went wrong. Please try again.");
+        toast.error(callback.error);
       })
       .finally(() => setIsLoading(false));
   };

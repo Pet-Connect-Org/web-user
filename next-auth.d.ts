@@ -1,7 +1,7 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 
 export type ExtendedUser = DefaultSession["user"] & {
-  id: string;
+  id: number;
   role: number;
   sex: string;
   address: string;
@@ -10,6 +10,8 @@ export type ExtendedUser = DefaultSession["user"] & {
 
 declare module "next-auth" {
   interface Session {
-    user: ExtendedUser;
+    user: ExtendedUser & {
+      accessToken: string;
+    };
   }
 }

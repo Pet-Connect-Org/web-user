@@ -20,14 +20,15 @@ export default function OtpPage() {
   const searchParams = useSearchParams();
   const [otp, setOtp] = useState<string>("");
   const [canResendOtp, setCanResendOtp] = useState(false);
-  const { mutate: verifyUserEmail, isLoading } = useVerifyUserEmail();
+  const { mutate, isLoading } = useVerifyUserEmail();
   const { mutate: resendVerificationCode } = useResendVerificationCode();
 
-  const email = searchParams.get("email") ?? "";
+  const email = searchParams.get("email");
+
   const onSubmit = () => {
     if (!email || !otp) return;
 
-    verifyUserEmail(
+    mutate(
       { email, token: otp },
       {
         onSuccess: () => {
@@ -41,20 +42,7 @@ export default function OtpPage() {
     );
   };
 
-  const handleResendOtp = () => {
-    resendVerificationCode(
-      { email },
-      {
-        onSuccess: () => {
-          toast.success("Resend otp successfully, please check your email!");
-        },
-        onError: () => {
-          toast.error("There is something wrong. Please try again later!");
-        },
-      }
-    );
-    setCanResendOtp(false);
-  };
+  if (!email) return;
 
   return (
     <Box display="grid" sx={{ placeItems: "center" }} textAlign="center">
@@ -70,7 +58,14 @@ export default function OtpPage() {
         Haven&apos;t received the code yet?
       </Typography>
       <Typography
-        onClick={() => (canResendOtp ? handleResendOtp() : undefined)}
+        onClick={() =>
+          canResendOtp
+            ? resendVerificationCode(
+                { email },
+                { onSuccess: () => setCanResendOtp(false) }
+              )
+            : undefined
+        }
         fontWeight={600}
         sx={{ textDecoration: "underline" }}
         color={
